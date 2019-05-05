@@ -43,7 +43,7 @@
       <if test="id != null" >
         id,
       </if>
-      <if test="username != null" >
+      <if test="username!= null" >
         username,
       </if>
       <if test="password != null" >
@@ -104,6 +104,15 @@
       </if>
     </trim>
   </insert>
+  <insert id="insert2" parameterType="com.mmall.pojo.User">
+    insert into mmall_user (id, username, password,
+      email, phone, question,
+      answer, role, create_time,
+      update_time)
+      values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+      #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{question,jdbcType=VARCHAR},
+      #{answer,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER}, now(),now())
+  </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.mmall.pojo.User" >
     update mmall_user
     <set >
@@ -150,4 +159,45 @@
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="checkUsername" resultType="int" parameterType="String">
+    select count(1) from mmall_user
+    where username=#{username}
+  </select>
+  <select id="selectLogin" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_user
+    where username=#{username}
+    and password=#{password}
+  </select>
+  <select id="checkEmail" resultType="int" parameterType="String">
+    select count(1) from mmall_user
+    where email=#{email}
+  </select>
+  <select id="selectQuestionByUsername" resultType="String" parameterType="String">
+    select question from mmall_user
+    where username=#{username}
+  </select>
+  <select id="checkAnswer" resultType="int" parameterType="map">
+    select count(1) from mmall_user
+    where username=#{username}
+    and question=#{que}
+    and answer=#{ans}
+  </select>
+  <update id="updataPasswordByUsername" parameterType="map">
+    updata mmall_user
+    set password=#{newpassword}
+    and update_time=now()
+    where username=#{username}
+  </update>
+  <select id="checkPassword" resultType="int" parameterType="map">
+    select count(1) from mmall_user
+    where id=#{userid}
+    and password=#{password}
+  </select>
+  <select id="checkEmailById" resultType="int" parameterType="map">
+    select count(1) from mmall_user
+    where email=#{email}
+    and id!=#{id}
+  </select>
 </mapper>
